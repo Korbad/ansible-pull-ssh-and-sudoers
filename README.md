@@ -1,4 +1,10 @@
 # ansible-pull-ssh-and-sudoers
 Target for ansible-pull, sets up ssh and adds current user to sudoers file
 
+```
 ansible-pull -U https://github.com/Korbad/ansible_pull_ssh_and_sudoers.git -i localhost, --accept-host-key
+```
+
+```
+ansible-pull -U git@github.com:Korbad/ansible-pull-ssh-and-sudoers.git -i localhost, --accept-host-key
+```
