@@ -1,0 +1,25 @@
+- hosts: localhost
+  connection: local
+  become: yes
+  vars_prompt:
+  - name: ansible_become_pass
+    prompt: become password?
+    private: yes
+  vars:
+    ansible_user: "{{ lookup('env','USER') }}"
+  tasks:
+  - ansible.builtin.package:
+      name: openssh
+
+  - ansible.builtin.user:
+      generate_ssh_key: yes
+      name: "{{ ansible_user }}"
+
+  - copy:
+      dest: /etc/sudoers.d/ansible
+      content: "ansible ALL=(root) NOPASSWD: ALL"
+
+  - name: restart_sshd
+    service:
+      name: sshd
+      state: restarted  

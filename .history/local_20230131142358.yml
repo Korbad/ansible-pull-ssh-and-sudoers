@@ -1,0 +1,35 @@
+- hosts: localhost
+  connection: local
+  become: yes
+  vars_prompt:
+  - name: ansible_become_pass
+    prompt: become password?
+    private: yes
+  vars:
+    current_user: "{{ lookup('env','USER') }}"
+  tasks:
+  - name: Ensure OpenSSH is installed
+    ansible.builtin.package:
+      name: openssh
+
+  - name: Generate an SSH key for the current user
+    ansible.builtin.user:
+      generate_ssh_key: yes
+      name: "{{ current_user }}"
+
+  - name: Manage /etc/sudoers.d directory
+    file:
+      path: /etc/sudoers.d
+      state: directory
+
+  - name: Manage sudoers file
+    community.general.sudoers:
+      name: "{{ current_user }}"
+      user: "{{ current_user }}"
+      commands: ALL
+      state: present
+
+  - name: restart_sshd
+    service:
+      name: sshd
+      state: restarted  
